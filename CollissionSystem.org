@@ -1,0 +1,89 @@
+#+title: Collission System
+
+* Formas
+
+Las formas no contienen los datos de transformación espacial.
+
+- Circle
+- Capsule
+- Box
+
+* Typos de colisión
+
+- *Intersect* : Intersección de dos formas.
+- *Touch* : Dos formas bloqueantes se tocan.
+
+** Eventos de Colisión
+
+- *InitIntersect* : Dos formas empiezan este frame a interseccionar.
+- *WhileIntersect* : Dos formas están interseccionando en este frame.
+- *LeaveIntersect* : Dos formas que interseccionaban han dejarlo de hacerlo en este frame.
+- *Touch* : Caso para formas que sean bloqueantes entre ellas.
+      - Sería como emitir *WhileIntersect* sin emitir LeaveIntersect
+
+* Algoritmos
+** Detección                                                         :ATTACH:
+:PROPERTIES:
+:ID:       bb6ea317-9507-4317-8d02-a8a96ed48e18
+:END:
+*** Propuesta 1
+
+Ordenar los colliders en una lista según un eje longitudinal.
+Este eje longitudinal se calcula teniendo en cuenta las posiciones de los colliders, obteniendo la recta que se acerca más a todos los puntos.
+
+Cortar por el centro de densidad de los colliders proyectado sobre el eje.
+Este proceso se realiza recursivamente para formar una estructura de árbol.
+
+Tener en cuenta que algunos colliders van a pertenecer a varias estructuras por su tamaño.
+
+[[attachment:clipboard-20260904T122738.png]]
+
+El proceso se ejecutará al inicio del nivel, Hay que estudiar la periodicidad de su ejecución posterior.
+
+Válido para collider estáticos.
+
+* Subsistemas
+** Collission Component
+*** Propuesta 1
+
+Un solo tipo de componente, una propiedad contiene la shape de colisión (std::variant).
+
+Al ser un único tipo de componente para todas las formas permite que:
+- Se puede iterar todos a la vez
+- Mejor alineamiento en memoria (1 sola lista)
+- Evita llamadas virtuales
+      - Ahorra espacio en memoria
+      - Ahorra los saltos de la vtable
+- Se delega el algoritmo de detección de colisión a un módulo externo
+- El componente no conoce a su entidad ni a su transformación.
+      - Ahorra espacio en memoria
+
+#+begin_src C++
+using CollTypeVariant = std::variant<Box,Circle,Capsule>;
+
+namespace wcm {
+    class CollissionComponent : public Component {
+
+        CollTypeVariant collission_shape{};
+
+        // Events
+
+        TEvent<void,wcl::CollData> OnInitIntersect;
+        TEvent<void,wcl::CollData> OnIntersecting;
+        TEvent<void,wcl::CollData> OnLeaveIntersect;
+
+    };
+}
+#+end_src
+
+** Collission System
+
+Encargado de ejecutar en cada frame (o el intérvalo elegido) la lógica de los colliders.
+
+* Módulos
+** WCollission
+** WObjects
+
+Contiene el subsistema de *Collission Component*.
+
+** WSystems
