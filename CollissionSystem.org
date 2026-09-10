@@ -1,5 +1,7 @@
 #+title: Collission System
 
+#+startup: latexpreview
+
 * Formas
 
 Las formas no contienen los datos de transformación espacial.
@@ -41,6 +43,131 @@ Tener en cuenta que algunos colliders van a pertenecer a varias estructuras por 
 El proceso se ejecutará al inicio del nivel, Hay que estudiar la periodicidad de su ejecución posterior.
 
 Válido para collider estáticos.
+
+** Invertir una base ortogonal
+:PROPERTIES:
+:ORDERED:  t
+:END:
+
+*** Invertir matriz de rotación 3x3
+
+Sea $M$ una base ortogonal de 3 vectores y $A$ una base ortonormal de 3 vectores tal que
+
+$$
+AXYZ = M
+$$
+
+Donde $X$, $Y$, $Z$ son matrizes que aplican una escala a cada columna de $A$.
+
+$X = \left(
+\begin{array}{ccc}
+x & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{array} \right)$, $Y = \left( \begin{array}{ccc} 1 & 0 & 0 \\ 0 & y & 0 \\ 0 & 0 & 1 \end{array} \right)$, $Z=\left( \begin{array}{ccc} 1&0&0\\0&1&0\\0&0&z\end{array} \right)$
+
+y
+
+$X^{-1}= x^{-1}_{11} = 1/x_{11}$, $x^{-1}_{ij} = x_{ij}$ para $ij \neq 11$
+
+Resultados análogos para $Y$ y $Z$.
+
+$M^{-1} = (A \cdot X \cdot Y \cdot Z)^{-1} = Z^{-1} \cdot Y^{-1} \cdot Z^{-1} \cdot A^t$
+
+$M^{-1}M = I$
+
+*** Invetir Matriz de transformación
+
+Sea $T$ una matriz de transofrmación 4x4 tal que $T^{-1}T = I$
+
+$T^{-1} = \left( \begin{array}{c|c} M^{-1} & \begin{array}{c} t^{-1}_x \\ t^{-1}_y \\ t^{-1}_z\end{array} \\ \hline
+\begin{array}{ccc} 0&0&0 \end{array} & t^{-1}_w \end{array} \right)$ , $T = \left( \begin{array}{c|c} M & \begin{array}{c} t_x \\ t_y \\ t_z\end{array} \\ \hline
+\begin{array}{ccc} 0&0&0 \end{array} & t_w \end{array} \right)$
+
+$t^{-1}_w = 1/t_w$
+
+$T^{-1}_{f1} \times T_{c4}= (m^{-1}_{11} \cdot t_x  + m^{-1}_{12} \cdot t_y  + m^{-1}_{13} \cdot t_z  + t^{-1}_x \cdot t_w) = 0$
+
+$t^{-1}_x = -(m^{-1}_{11} \cdot t_x  + m^{-1}_{12} \cdot t_y  + m^{-1}_{13} \cdot t_z) / t_w$
+
+Resultado análogo para $t^{-1}_y$ y $t^{-1}_z$.
+
+** OBB Capsule intersección
+
+Una capsula compone de un segmento y un radio.
+La estrategia es buscar la distancia mínima entre el segmento y el OBB.
+Se alinea el segmento con el espacio de OBB, pasando el OBB a ser un AABB.
+Al ser el OOB un AABB nos interesan los límites $\pm H_x$, $\pm H_y$ y $\pm H_z$ de cada coordenada.
+
+Sea $P_s(t) = P_a + (P_b - P_a)t$  un punto en el segmento para $t \in [0,1]$
+Sea $x(t) = P_{ax} + (P_{bx} - P_{ax})t$ la coordenada $x$ de $P_s(t)$, análogo para $y$ $z$.
+
+Queremos hallar la mínima distancia al cuadrado $D^2(P_s(t), AABB)$ de algún $P_s(t)$ con $t \in [0,1]$.
+Como cada coordenada es independiente podemos despomponer:
+
+- $d^2(t) = d_x^2(t) + d_y^2(t) + d_z^2(t)$
+
+Siendo para los intérvalos $-H_x$ y $H_x$:
+
+- $$
+  \displaystyle d_x^2(t) = \left\{ \begin{array}{lcl}
+  (x(t) + H_x)^2 & si & x(t) \leq -H_x \\
+  0 & si & -H_x < x(t) < H_x \\
+  (x(t) - H_x)^2 & si & x(t) \geq H_x
+  \end{array}
+  $$
+
+Si $P_{bx} - P_{ax} = 0$ entonces $d_x^2$ no depende de $t$.
+
+- $$
+  d_x^2 = \left\{ \begin{array}{lcl}
+  (P_{ax} + H_x)^2 & si & P_{ax} \leq -H_{x} \\
+  0 & si & -H_x < P_{ax} < H_x \\
+  (P_{ax} - H_x)^2 & si & P_{ax} \geq H_{x}
+  \end{array}
+  $$
+
+Buscamos los valores de $t$ que definen los puntos de transición de $d_x^2(t)$ y solo conservamos cuando $t \in [0,1]$
+- Para $x(t) = -H_x$
+      - $\displaystyle t = \frac{-H_x - P_{ax}}{P_{bx} - P_{ax}}$
+- Para $x(t) = h_x$
+      - $\displaystyle t = \frac{H_x - P_{ax}}{P_{bx} - P_{ax}}$
+
+Con estos valores de $t$ podemos construir un conjunto de intérvalos $I$ donde estudiaremos $d_2(t)$.
+
+Nótese que algunos de los términos $d^2_i(t)$ para $i \in \{x,y,z\}$ se anularán en algunos intérvalos.
+
+Búscaremos los valores de $t$ tal que $(d^2(t))'=0$ y llamaremos $t_i^* = clamp(t, I_i_{min}, I_i_{max})$
+en cada intérvalo $I_i$.
+
+$d^2(t)'$ es la derivada respecto de $t$ de $d^2(t)$, $d^2(t)'=0$ es un mínimo de la función $d^2(t)$. $d^2(t)$ es una función convexa como puede comprobarse en el siguiente desarrollo.
+
+Estirando un poco el lenguaje, según el valor de $t$ podemos escribir.
+
+\begin{array}{ll}
+d^2(t) & = (x(t) \pm H_x)^2 + \dots + (z(t) \pm H_z)^2 \\
+ & = ((P_{ax} + (P_{bx} - P_{ax})t)^2 \pm 2H_x(P_{ax} + (P_{bx} - P_{ax})t) + H_x^2) + \dots \\
+& = P_{ax}^2 + 2P_{ax}(P_{bx} - P_{ax})t + (P_{bx} - P_{ax})^2t^2 \pm 2H_x P_{ax} \pm 2H_x(P_{bx} - P_{ax})t + H_x^2 + \dots \\
+\end{array}
+
+sólo nos quedamos con los término dependientes de $t$.
+
+\begin{array}{l}
+t^2(P_{bx} - P_{ax})^2 + t(2P_{ax}(P_{bx} - P_{ax}) \pm 2H_x(P_{bx} - P_{ax})) + \dots \\
+= t^2((P_{bx}-P_{ax})^2 + \dots + (P_{bz} - P_{az})^2) + 2t((P_{ax}(P_{bx} - P_{ax}) \pm H_x(P_{bx} - P_{ax})) + \dots ) \\
+\end{array}
+
+Derivamos respecto a $t$, igualamos a 0 y despejamos $t$
+
+\begin{equation*}
+t=\frac{-(P_{ax}(P_{bx} - P_{ax}) \pm H_x(P_{bx} - P_{ax})) - \dots - (P_{az}(P_{bz} - P_{az}) \pm H_z(P_{bz} - P_{az}))} {(P_{bx} - P_{az})^2 + \dots + (P_{bz} - P_{az})^2}
+\end{equation*}
+
+Según el valor de $t$ cada bloque respecto $xyz$ usará $H_i$ o $-H_i$ $i \in xyz$ o el bloque será directamente 0.
+
+Buscaremos la distancia mínima tal que $d^2_{min} = min\{d^2(t_i^*) : I_i \in I \}$
+
+la intersección debe asegurar que $d^2_{min} \leq R*R$, donde $R$ es el radio de la cápsula.
 
 * Subsistemas
 ** Collission Component
