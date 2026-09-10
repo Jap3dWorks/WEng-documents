@@ -92,7 +92,7 @@ $t^{-1}_x = -(m^{-1}_{11} \cdot t_x  + m^{-1}_{12} \cdot t_y  + m^{-1}_{13} \cdo
 
 Resultado análogo para $t^{-1}_y$ y $t^{-1}_z$.
 
-** OBB Capsule intersección
+** OBB Capsula intersección check
 
 Una capsula compone de un segmento y un radio.
 La estrategia es buscar la distancia mínima entre el segmento y el OBB.
@@ -157,10 +157,10 @@ t^2(P_{bx} - P_{ax})^2 + t(2P_{ax}(P_{bx} - P_{ax}) \pm 2H_x(P_{bx} - P_{ax})) +
 = t^2((P_{bx}-P_{ax})^2 + \dots + (P_{bz} - P_{az})^2) + 2t((P_{ax}(P_{bx} - P_{ax}) \pm H_x(P_{bx} - P_{ax})) + \dots ) \\
 \end{array}
 
-Derivamos respecto a $t$, igualamos a 0 y despejamos $t$
+Derivamos respecto a $t$, igualamos a 0 y despejamos $t$. Nótese que el coeficiente de $t^2$ es siempre positivo.
 
 \begin{equation*}
-t=\frac{-(P_{ax}(P_{bx} - P_{ax}) \pm H_x(P_{bx} - P_{ax})) - \dots - (P_{az}(P_{bz} - P_{az}) \pm H_z(P_{bz} - P_{az}))} {(P_{bx} - P_{az})^2 + \dots + (P_{bz} - P_{az})^2}
+t=\frac{-((P_{ax}\pm H_x)(P_{bx} - P_{ax})) - \dots - ((P_{az} \pm H_z)(P_{bz} - P_{az}))} {(P_{bx} - P_{az})^2 + \dots + (P_{bz} - P_{az})^2}
 \end{equation*}
 
 Según el valor de $t$ cada bloque respecto $xyz$ usará $H_i$ o $-H_i$ $i \in xyz$ o el bloque será directamente 0.
