@@ -170,7 +170,7 @@ Buscaremos la distancia mínima tal que $d^2_{min} = min\{d^2(t_i^*) : I_i \in I
 
 la intersección debe asegurar que $d^2_{min} \leq R*R$, donde $R$ es el radio de la cápsula.
 
-** Intersección Esfera Capsula
+** Intersección esfera cápsula
 
 $<,>$ define la operación producto escalar.
 
@@ -194,6 +194,40 @@ Para que una esfera y una cápsula estén en intersección debe cumplirse que:
 $\displaystyle <p(t_{min}) - p_u,\ p(t_{min})- p_u>\ \ \leq\ \ (r_1 + r_2)^2$
 
 Siendo $r_1$ el radio de la esfera con centro $p_u$ y $r_2$ el radio de la cápsula con extremos $p_a$ y $p_b$.
+
+** Intersección cápsula cápsula
+
+El método consiste en encontrar los dos puntos más cercanos pertenencientes al segmento $S_1$ y $S_2$.
+Una vez encontrados se comparará la distancia al cuadrado con la suma de los radios al cuadrado.
+
+Sean las cápsulas 1 y 2 con rádios $R_1$ y $R_2$ respectivamente y los segmentos
+
+$S_1(s) = P_1 + s \cdot d_1$  con  $d_1 = (P_{1b} - P_1)$
+$S_2(t) = P_2 + t \cdot d_2$  con  $d_2 = (P_{2b} - P_2)$
+
+respectivamente.
+
+Sea $d^2(s,t)=(S_1(s) - S_2(t))^2$ la distancia al cuadrado entre un punto de $S_1$ y un punto de $S_2$.
+
+Para hallar los puntos más cercanos derivamos respecto a $\frac{d^2(s,t)}{ds}$, $\frac{d^2(s,t)}{dt}$, igualamos a 0 cada expresión y despejamos.
+
+$\displaystyle f_s (t) = \frac{-P_1d_1 + d_1P_2 + td_1d_2}{d_1^2}$, desde $\displaystyle \frac{d^2}{ds}$ devuelve el valor de $s$ más cercano para un valor de $t$.
+
+$\displaystyle f_t (s) = \frac{-P_2d_2 + d_2P_1 + sd_1d_2}{d_2^2}$, desde $\displaystyle \frac{d^2}{dt}$ devuelve el valor de $t$ más cervano para un valor de $s$.
+
+$f_t(f_s(t^*))=t^*$ y despejamos $t^*$.
+
+$\displaystyle t^* = \frac{d_1^2 (P_1d_2 - P_2d_2) - P_1d_2 + P_2d_1}{d_1^2d_2^2 - d_1d_2}$
+
+$\displaystyle t_{min} = \max\{\min\{t^*, 1\}, 0\}$
+
+$\displaystyle s_{min} = \max\{\min\{f_s(t_{min}), 1\}, 0\}$
+
+Para que las cápsulas 1 y 2 interseccionen debe cumplirse que
+
+$\displaystyle <S_1(s_{min}), S_2(t_{min})>\ \ \leq\ \ (R_1 + R_1)^2$
+
+Nota: las multiplicaciones de vectores representan la operación producto escalar $<,>$.
 
 * Subsistemas
 ** Collission Component
