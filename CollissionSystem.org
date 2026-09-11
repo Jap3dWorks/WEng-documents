@@ -1,6 +1,6 @@
 #+title: Collission System
 
-#+startup: latexpreview
+#+startup: latexpreview content
 
 * Formas
 
@@ -92,7 +92,7 @@ $t^{-1}_x = -(m^{-1}_{11} \cdot t_x  + m^{-1}_{12} \cdot t_y  + m^{-1}_{13} \cdo
 
 Resultado análogo para $t^{-1}_y$ y $t^{-1}_z$.
 
-** OBB Capsula intersección check
+** Intersección OBB/AABB Capsula
 
 Una capsula compone de un segmento y un radio.
 La estrategia es buscar la distancia mínima entre el segmento y el OBB.
@@ -111,9 +111,9 @@ Siendo para los intérvalos $-H_x$ y $H_x$:
 
 - $$
   \displaystyle d_x^2(t) = \left\{ \begin{array}{lcl}
-  (x(t) + H_x)^2 & si & x(t) \leq -H_x \\
-  0 & si & -H_x < x(t) < H_x \\
-  (x(t) - H_x)^2 & si & x(t) \geq H_x
+  (x(t) + H_x)^2 & si & x(t) < -H_x \\
+  0 & si & -H_x \leq x(t) \leq H_x \\
+  (x(t) - H_x)^2 & si & x(t) > H_x
   \end{array}
   $$
 
@@ -130,7 +130,8 @@ Si $P_{bx} - P_{ax} = 0$ entonces $d_x^2$ no depende de $t$.
 Buscamos los valores de $t$ que definen los puntos de transición de $d_x^2(t)$ y solo conservamos cuando $t \in [0,1]$
 - Para $x(t) = -H_x$
       - $\displaystyle t = \frac{-H_x - P_{ax}}{P_{bx} - P_{ax}}$
-- Para $x(t) = h_x$
+
+- Para $x(t) = H_x$
       - $\displaystyle t = \frac{H_x - P_{ax}}{P_{bx} - P_{ax}}$
 
 Con estos valores de $t$ podemos construir un conjunto de intérvalos $I$ donde estudiaremos $d_2(t)$.
@@ -168,6 +169,31 @@ Según el valor de $t$ cada bloque respecto $xyz$ usará $H_i$ o $-H_i$ $i \in x
 Buscaremos la distancia mínima tal que $d^2_{min} = min\{d^2(t_i^*) : I_i \in I \}$
 
 la intersección debe asegurar que $d^2_{min} \leq R*R$, donde $R$ es el radio de la cápsula.
+
+** Intersección Esfera Capsula
+
+$<,>$ define la operación producto escalar.
+
+Basada en la distancia mínima de un punto y un segmento.
+
+La demostración es parecida al algoritmo de OBB/AABB Capsula.
+
+Sea $p_a$, $p_b$ dos puntos que componen un segmento, $p_u$ un punto en el espacio.
+
+sea $p(t) = p_a + (p_b - p_a)t$ un punto en el segmento para $t \in [0,1]$.
+
+El valor de $t$ ($t_{min}$) con el punto $p(t)$ más cercano a $p_u$ viene definido por:
+
+\begin{align*}
+& t^* = \frac{-<(p_a + p_u), (p_b - p_a)>}{<(p_b - p_a), (p_b - p_a)>} \\[2pt]
+& t_{min} = \max\{\min\{t^*,1\}, 0\} 
+\end{align*}
+
+Para que una esfera y una cápsula estén en intersección debe cumplirse que:
+
+$\displaystyle <p(t_{min}) - p_u,\ p(t_{min})- p_u>\ \ \leq\ \ (r_1 + r_2)^2$
+
+Siendo $r_1$ el radio de la esfera con centro $p_u$ y $r_2$ el radio de la cápsula con extremos $p_a$ y $p_b$.
 
 * Subsistemas
 ** Collission Component
