@@ -225,7 +225,7 @@ $\displaystyle s_{min} = \max\{\min\{f_s(t_{min}), 1\}, 0\}$
 
 Para que las cápsulas 1 y 2 interseccionen debe cumplirse que
 
-$\displaystyle <S_1(s_{min}), S_2(t_{min})>\ \ \leq\ \ (R_1 + R_1)^2$
+$\displaystyle <S_1(s_{min}), S_2(t_{min})>\ \ \leq\ \ (R_1 + R_2)^2$
 
 Nota: las multiplicaciones de vectores representan la operación producto escalar $<,>$.
 
