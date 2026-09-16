@@ -1,6 +1,8 @@
 #+title: Collission System
+#+author: Jordi Amposta
 
 #+startup: latexpreview content
+#+PROPERTY: STATUS_ALL proposal experimental implemented rejected
 
 * Formas
 
@@ -29,6 +31,9 @@ Las formas no contienen los datos de transformación espacial.
 :ID:       bb6ea317-9507-4317-8d02-a8a96ed48e18
 :END:
 *** Propuesta 1
+:PROPERTIES:
+:STATUS:   proposal
+:END:
 
 Ordenar los colliders en una lista según un eje longitudinal.
 Este eje longitudinal se calcula teniendo en cuenta las posiciones de los colliders, obteniendo la recta que se acerca más a todos los puntos.
@@ -182,13 +187,16 @@ Sea $p_a$, $p_b$ dos puntos que componen un segmento, $p_u$ un punto en el espac
 
 sea $p(t) = p_a + (p_b - p_a)t$ un punto en el segmento para $t \in [0,1]$.
 
+Nombramos $S = p_b - p_a$.
+
 El valor de $t$ ($t_{min}$) con el punto $p(t)$ más cercano a $p_u$ viene definido por:
 
 \begin{align*}
-& t^* = \frac{-<(p_a + p_u), (p_b - p_a)>}{<(p_b - p_a), (p_b - p_a)>} \\[2pt]
+& t^* = \frac{-<p_a, S> + <p_u, S>}{<S, S>} \\[2pt]
 & t_{min} = \max\{\min\{t^*,1\}, 0\} 
 \end{align*}
 
+Nótese que si $p_u=(0,0,0)$ la expresión superior se simplifica.
 Para que una esfera y una cápsula estén en intersección debe cumplirse que:
 
 $\displaystyle <p(t_{min}) - p_u,\ p(t_{min})- p_u>\ \ \leq\ \ (r_1 + r_2)^2$
@@ -228,6 +236,104 @@ Para que las cápsulas 1 y 2 interseccionen debe cumplirse que
 $\displaystyle <S_1(s_{min}), S_2(t_{min})>\ \ \leq\ \ (R_1 + R_2)^2$
 
 Nota: las multiplicaciones de vectores representan la operación producto escalar $<,>$.
+
+** Intersección plano segmento
+
+Sea $S(t)=s_0 + (s_1 - s_0)t$ un segmento con inicio y fin en $s_0$ y $s_1$ respectivamente.
+$l = s_1 - s_0$
+Sea $P(N,d)$ un plano cuya ecuación implícita es $N_xX + N_yY + N_zZ = d <N,N>$
+
+Sustituimos las coordenads $XYZ$ del plano por la ecuación del segmento.
+
+$\displaystyle N_x(s_{0x} + l_{x}t) + N_y(s_{0y} + l_yt) + N_z(s_{0z} + l_zt) = d<N,N>$
+
+$\displaystyle t(N_xl_x + \dots + N_zl_z) = d<N,N> - (N_xS_{0x} + \dots + N_zS_{0z})$
+
+$\displaystyle t = \frac{d<N,N> - <N,s_0>}{<N,l>}$
+
+Creo que podemos ahorrar una operación si lo computamos de la siguiente forma.
+
+\begin{equation*}
+t = \frac{N_x(dN_x - s_{0x}) + \dots + N_z(dN_z - S_{0z})}{<N,l>}
+\end{equation*}
+
+Si $<N,l>=0$ no hay punto de intersección, y el plano y el segmento son paralelos.
+
+$S(t)$ intersecciona con $P(N,d)$ si y solo si $<N,l> \neq 0$ y $0 \leq t \leq 1$.
+
+** Plano de un triángulo
+
+Sea $T \equiv (v_0, v_1, v_2)$ un triángulo.
+Sea $P(N,d)$ el plano sobre el que reposa $T$.
+
+$N = (v_1 - v_0) \times (v_2 - v_0)$
+
+Si $\displaystyle P(N,d) \equiv N_xX + \dots + N_zZ=d<N,N>$
+
+y
+
+\begin{align*}
+P(N,d) \equiv & N_x(X-v_{0x}) + \dots + N_z(Z-v_{0y})=0 \\
+& N_xX + \dots + N_zZ = <N,v_0>
+\end{align*}
+
+Si equiparamos ambas ecuaciones
+
+$\displaystyle d=\frac{<N,v_0>}{<N,N>}$
+
+** Punto dentro triangulo : S0 = uS1 + uS2
+
+El siguiente método sirve para comprobar si un punto $P$ está situado dentro de un triángulo $T$.
+Para ello definiremos el $P$ como la suma de dos aristas del triángulo.
+
+Sea $v_0$, $v_1$ y $v_2$ tres vértices que forman un triángulo $T$.
+Sea $p$ un punto situado en el plano definido por $T$.
+
+Sea $s_0=p-v_0$, $s_1=v_1 - v_0$ y $s_2=v_2 - v_0$.
+Podemos definir $s_0 = us_1 + vs_2$, $u,v \in \mathbb{R}$
+
+Si escribimos la igualdad superior en cada una de sus componentes podemos definir un sistema linal para resolver los valores $u$ y $v$.
+
+\begin{equation*}
+\left\{ \begin{array}{l}
+1.\ \ s_{0x} = us_{1x} + vs_{2x} \\
+2.\ \ s_{0y} = us_{1y} + vs_{2y}
+\end{array}
+\end{equation*}
+
+Desde 1.
+
+$\displaystyle u = \frac{s_{0x} - vs_{2x}}{s_{1x}}$
+
+Sustituimos en 2.
+
+$\displaystyle v = \frac{s_{1x}s_{0y} - s_{1y}s_{0x}}{-s_{1y}s_{2x} + s_{2y}s_{1x}}$
+
+$p$ está dentro del triángulo $T$ si y solo si $0 \leq u + v \leq 1$.
+
+** Proyección de un Punto en un Plano
+
+Sea $u \equiv (u_x, u_y, u_z)$ un punto en el espacio.
+Sea $P(N,d)$ un plano en el espacio.
+Sea $u'=u+Nl$ la proyección de $u$ sobre $P$.
+
+El método trata de encontrar el valor de $l$ para conseguir las coordenadas de $u'$
+
+Si $u'$ pertenece a $P$ entonces.
+
+\begin{align*}
+&N_xu_x' + \dots + N_zu_z' = d<N,N> \\
+&<N,u'> = d<N,N> \\[3pt]
+&<N,u + Nl> = d<N,N> \\
+\end{align*}
+
+Aplicando las propiedades de las formas bilineares (producto escalar es una forma bilineal).
+
+\begin{align*}
+&l<N,N> + <N,u> = d<N,N> \\[3pt]
+& l = \frac{d<N,N> - <N,u>}{<N,N>} \\
+& l = d - \frac{<N,u>}{<N,N>}
+\end{align*}
 
 * Subsistemas
 ** Collission Component
