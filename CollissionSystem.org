@@ -241,6 +241,7 @@ Nota: las multiplicaciones de vectores representan la operación producto escala
 
 Sea $S(t)=s_0 + (s_1 - s_0)t$ un segmento con inicio y fin en $s_0$ y $s_1$ respectivamente.
 $l = s_1 - s_0$
+
 Sea $P(N,d)$ un plano cuya ecuación implícita es $N_xX + N_yY + N_zZ = d <N,N>$
 
 Sustituimos las coordenads $XYZ$ del plano por la ecuación del segmento.
