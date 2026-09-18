@@ -336,6 +336,120 @@ Aplicando las propiedades de las formas bilineares (producto escalar es una form
 & l = d - \frac{<N,u>}{<N,N>}
 \end{align*}
 
+** Recta entre dos planos
+
+Sea $P_1(N_1,d_1)$ y $P_2(N_1,d_1)$ dos planos.
+Las ecuaciones implícitas de un plano vienen dadas por
+
+\begin{equation*}
+N_xX + N_yY + N_zZ = d<N>
+\end{equation*}
+
+La recta $R = P_1 \cap P_2$ se describe por el siguiente sistema (ecuaciones implícitas).
+
+\begin{equation*}
+\left( \begin{array}{l}
+aX + bY + cZ = u \\
+dX + eY + fZ = v
+\end{array}
+\end{equation*}
+
+Si resolvemos el sistema podemos definir las ecuaciones paramétricas.
+
+\begin{equation*}
+L \equiv \left(
+\begin{array}{cccc}
+x = & -\alpha a (ec - fb) & + & (eu - vb) \\[2pt]
+y = & -\alpha (\frac{af - dc}{ae - db}) & + & \frac{av - du}{ae - db} \\[2pt]
+z = & \alpha &
+\end{array}
+\end{equation*}
+
+Donde los términos dependientes de $\alpha$ son un vector en la dirección de la recta, y los términos no dependientes de $\alpha$ son un punto de la recta.
+
+** Planos de una recta
+
+El siguiente método sirve para deducir almenos dos planos $P_1$ y $P_2$ (existen infinitos planos) cuya intersección son la recta $R$.
+
+Sea $R(v,p)$ donde $v$ es un vector en la dirección de la recta y $p$ un punto en la recta.
+Por tanto $\alpha v + p = (X,Y,Z)$ es un punto en la recta.
+
+Lo podemos escribir de forma matricial
+
+\begin{equation*}
+\left( \begin{array}{c|c}
+v_x & X - p_x \\
+v_y & Y - p_y  \\
+v_z & Z - p_z
+\end{array} \right)
+\end{equation*}
+
+\begin{equation*}
+\left(
+\begin{array}{c|c}
+1 & \frac{x-p1}{X} \\
+0 & (Y - p_y) v_x - (X - p_x) v_y \\
+0 & (Z - p_z) v_x - (X - p_x) v_z
+\end{array}
+\right)
+\end{equation*}
+
+La segunda y tercera fila describen dos planos respectivamente.
+
+\begin{equation*}
+\left\{ 
+\begin{array} {l}
+P_1 : Yv_x - Xv_y = p_yv_x - p_xv_y \\
+P_2 : Zv_x - Xv_z = p_zv_x - p_xv_z \\
+\end{array}
+\end{equation*}
+
+** Intersección entre un plano y una recta
+
+Como una recta es la intersección de dos planos realmente el problema es la intersección entre 3 planos.
+
+También es extrapolable a la intersección entre 2 rectas si estas interseccionan.
+
+Partimos del sistema de intersección entre dos planos que se puede extraer desde la recta,
+y a este sistema se le añade la ecuación del plano.
+
+** Intersección Triangulo Triangulo
+
+Sea $T_0=(t_{00}, t_{01}, t_{02})$ y $T_1=(t_{10}, t_{11}, t_{12})$ dos triangulos.
+
+Búscamos la recta $L$ de la intersección entre los planos $P_0$ y $P_1$.
+
+$P_0 = aX + bY + cZ = u$ y
+$P_1 = dX + rY + fZ = v$
+
+por tanto la recta $L$
+
+\begin{equation*}
+L \equiv
+\left( \begin{array}{ccc|c}
+a & b & c & u \\
+d & e & f & v
+\end{array} \right)
+\end{equation*}
+
+El sistema escalonado será el siguiente, de donde se pueden extraer unas ecuaciones paramétricas.
+
+\begin{equation*}
+L \equiv \left( 
+\begin{array}{ccc|c}
+1 & 0 & a(ec - fb) & a(eu - vb) \\
+0 & 1 & \frac{af - dc}{ae - db} & \frac{av - du}{ae - db}
+\end{array}
+\right)
+\end{equation*}
+
+Una vez definido $L(v,p)$ buscamos en cada triángulo el vértice aislado.
+
+$<t_{i} - p, v> = q_i$ para cada vértice $t_{i}$
+
+
+
+
 * Subsistemas
 ** Collission Component
 *** Propuesta 1
