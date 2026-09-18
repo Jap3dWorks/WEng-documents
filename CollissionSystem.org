@@ -338,7 +338,7 @@ Aplicando las propiedades de las formas bilineares (producto escalar es una form
 
 ** Recta entre dos planos
 
-Sea $P_1(N_1,d_1)$ y $P_2(N_1,d_1)$ dos planos.
+Sea $P_1(N_1,d_1)$ y $P_2(N_2,d_2)$ dos planos.
 Las ecuaciones implícitas de un plano vienen dadas por
 
 \begin{equation*}
@@ -361,11 +361,27 @@ L \equiv \left(
 \begin{array}{cccc}
 x = & -\alpha a (ec - fb) & + & (eu - vb) \\[2pt]
 y = & -\alpha (\frac{af - dc}{ae - db}) & + & \frac{av - du}{ae - db} \\[2pt]
-z = & \alpha &
+z = & \alpha & + & 0
 \end{array}
 \end{equation*}
 
 Donde los términos dependientes de $\alpha$ son un vector en la dirección de la recta, y los términos no dependientes de $\alpha$ son un punto de la recta.
+
+Si $P_1$ y $P_2$ son dos planos paralelos entonces:
+
+\begin{array}{c}
+d = \alpha a \\
+e = \alpha b \\
+f = \alpha c
+\end{array}
+
+Si sustituimos estos valores en la expresión $ac - db$ entonces:
+
+\begin{equation*}
+ac-db = \alpha(ab-ba) = 0
+\end{equation*}
+
+Y si además de la condición superior se cumple que $N_1 d_1 = N_2 d_2$ entonces $P_1=P_2$ .
 
 ** Planos de una recta
 
@@ -443,12 +459,82 @@ L \equiv \left(
 \right)
 \end{equation*}
 
-Una vez definido $L(v,p)$ buscamos en cada triángulo el vértice aislado.
+Una vez definido $L(v,p)$ buscamos en cada triángulo el vértice aislado $t_a$.
 
-$<t_{i} - p, v> = q_i$ para cada vértice $t_{i}$
+$<t_{i} - p, v> = q_i$ para cada vértice $t_{i}$, $i \in \{0,1,2\}$
 
+\begin{equation*}
+S(q_i) = \left\{
+\begin{array}{ccc}
+0 & si & q_i \leq 0 \\
+1 & si & q_i > 0
+\end{array}
+\end{equation*}
 
+Definimos el bitmask $M=S(q_2)S(q_1)S(q_0)$.
 
+Si $M \in \{111, 000\}$ no hay vértice aislado y por tanto los dos triángulos no tienen intersección.
+la siguiente tabla muestra las equivalencias del vértice aislado según el valor de $M$.
+
+\begin{array}{c|c}
+001, 110 & t_0 \\
+010, 101 & t_1 \\
+011, 100 & t_2 
+\end{array}
+
+Debemos encontrar el segmento de la recta $L$ que interseccióna con el triángulo $T_i$.
+
+Sea $S_j(l) = t_a + (t_j - t_a)l$ para $j \in \{0,1,2\} - \{a\}$ un segmento sobre una de las aristas que interseccionan con $L$.
+
+Podemos encontrar el punto $S_j(l)$ de varias formas, una de ellas es por ejemplo extrayendo un plano desde $S_j$ y añadiéndolo sobre las equaciones de $L$, en este caso con solo resolver una coordenada, por ejemplo $Z$.
+
+Si $S_j(l) = (f\ g\ h)l + (t_{ax}\ t_{ay}\ t_{az})$ Entonces $Z$
+
+\begin{equation*}
+L' \equiv \left(
+\begin{array}{ccc|c}
+1 & 0 & a(ec - fb) & a(eu - vb) \\
+0 & 1 & \frac{af - dc}{ae - db} & \frac{av - du}{ae - db} \\
+0 & 0 & 1 & \frac{(ga(eu-vb)-t_{ax}f - p_0g)(ae-db) - (du+av)(g+f)}{ga(ec-fh)(ae-bd) + (dc-af)(g+f)}
+\end{array}
+\end{equation*}
+
+Podemos encontrar $XY$ mucho más fácil usando las equaciones de la recta que pasa por $S_j$.
+
+\begin{align*}
+Y & = \frac{ht_{ay} + gZ - gt_{az}}{h} \\
+X & = \frac{ht_{ax} + fZ - ft_{az}}{h}
+\end{align*}
+
+Otro método es usando las equaciones paramétricas de las rectas e igualándolas, que supone menos operaciones en total.
+
+$R_0=p_0 + v_0t_0$ y $R_1=p_1 + v_1t_1$.
+
+\begin{equation*}
+p_0 & + v_0t_0 = p_1 + v_1t_1$
+\end{equation*}
+
+Hay que tener cuidado con que coordenada usamos para resolver el sistema.
+
+Si $v_{0x}\neq0$ entonces
+
+\begin{align*}
+t_0 & = \frac{p_{1x} - p_{0x} + v_{1x}t_1}{v_{0x}}
+\end{align*}
+
+Sino eligimos otra coordenadas diferente a 0 en $v_0$ ($y$ o $z$)
+
+Si $v_{1y} \neq 0$ entonces
+
+\begin{align*}
+t_1 & = \frac{v_{0x} (p_{1y} - p_{0y}) - v_{0y}(p_{1x} + p_{0x})}{v_{0y}v_{1x} - v_{1y}v_{0x}}
+\end{align*}
+
+Con el valor de $t_1$ y la recta $R_1$ podemos encontrar el punto de intersección.
+
+La idea es encontrar los dos puntos de intersección en cada triángulo, proyectarlos sobre el eje de coordenadas con más grado de paralelismo (quedarse solo con la coordenada correspondiente al eje más paralelo) y comprobar si existe algún tipo de solapamiento escalar entre triángulos (comprobar si los dos intérvalos tienen puntos en común).
+
+Si existe solapamiento escalar los dos triángulos interseccionan.
 
 * Subsistemas
 ** Collission Component
