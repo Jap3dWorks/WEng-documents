@@ -345,6 +345,7 @@ Las ecuaciones implícitas de un plano vienen dadas por
 N_xX + N_yY + N_zZ = d<N>
 \end{equation*}
 
+Sea $R(D,p)$ la recta intersección entre $P_1$ y $P_2$.
 La recta $R = P_1 \cap P_2$ se describe por el siguiente sistema (ecuaciones implícitas).
 
 \begin{equation*}
@@ -353,6 +354,8 @@ aX + bY + cZ = u \\
 dX + eY + fZ = v
 \end{array}
 \end{equation*}
+
+Y si además de la condición superior se cumple que $N_1 d_1 = N_2 d_2$ entonces $P_1=P_2$ .
 
 Si resolvemos el sistema podemos definir las ecuaciones paramétricas.
 
@@ -365,7 +368,84 @@ z = & \alpha & + & 0
 \end{array}
 \end{equation*}
 
+Los términos no dependientes de $\alpha$ describen un punto $p$ en la recta $R$.
+
 Donde los términos dependientes de $\alpha$ son un vector en la dirección de la recta, y los términos no dependientes de $\alpha$ son un punto de la recta.
+
+- Nota: Si en $R(D,p)$, $D= N_1 \times N_2=0$ ambos planos son paralelos.
+
+*** Casos especiales
+
+Si en $N_1$ y $N_2$ existe una coordenada igual a 0 en ambos vectores hay que tratar cada caso de forma especial.
+
+Primero se presenta un método para detectar si existen coordenadas negadas en ambos vectores.
+
+\begin{equation*}
+q(x) = \left(
+\begin{array}{ccc}
+1 & si & x \neq 0 \\
+0 & si & x = 0
+\end{array}
+\end{equation*}
+
+Sea $m=q_0q_1q_2$ un bitmask tal que
+
+\begin{array}{cccc}
+& q(a) & q(b) & q(c) \\
+\lor & q(d) & q(e) & q(f) \\\hline
+& q_0 & q_1 & q_2
+\end{array}
+
+Según el valor de $m$ podemos deducir varias propieades.
+Si $m \in \{100, 010, 001\}$ ambos planos son paralelos.
+
+Si $m = 011$ la componente $N_x$ está negada en ambos vectores.
+El resultado es análogo para $N_y$ y $N_z$.
+
+A continuación se enumeran los casos especiales donde habrá que resolver el sistema de ecuaciones cambiando el proceso de escalonado.
+
+\begin{array}{ccl}
+101 & 5 & XZ \\
+110 & 6 & XY \\
+011 & 7 & YZ \\
+111 & 8 & \text{fórmula general}
+\end{array}
+
+Ejemplo de resolución del sistema en el caso $101$
+
+\begin{equation*}
+\begin{array}{ccc|c}
+1 & 0 & 0 & u/a - (c/a)((va - ud)/(fa - cd)) \\
+0 & 0 & 1 & (va - ud)/(fa - cd)
+\end{array}
+\end{equation*}
+
+Donde $N=(0\ 1\ 0)$ y $p$ puede verse en la resolución superior.
+
+Ejemplo de resolución del sistema en el caso $110$
+
+\begin{equation*}
+\begin{array}{ccc|c}
+1 & 0 & 0 & u/a - (b/a)((va - ue)/(ea - bd)) \\
+0 & 1 & 0 & (va - ue)/(ea - bd)
+\end{array}
+\end{equation*}
+
+Donde $N=(0\ 0\ 1)$ y $p$ puede verse en la resolución superior.
+
+Ejemplo de resolución del sistema en el caso $011$
+
+\begin{equation*}
+\begin{array}{ccc|c}
+0 & 1 & 0 & u/b - (c/b)((vb - ue)/(fb - cf)) \\
+0 & 0 & 1 & (vb - ue)/(fb - cf)
+\end{array}
+\end{equation*}
+
+Donde $N=(1\ 0\ 0)$ y $p$ puede verse en la resolución superior.
+
+Aunque $m$ sea uno de los valores de la tabla superior $P_1$ y $P_2$ pueden ser planos paralelos, A continuación se presenta un método para detectar si lo son.
+El método presupone el caso $m \in \{110, 111\}$.
 
 Si $P_1$ y $P_2$ son dos planos paralelos entonces:
 
