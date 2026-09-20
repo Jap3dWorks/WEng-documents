@@ -372,7 +372,17 @@ Los términos no dependientes de $\alpha$ describen un punto $p$ en la recta $R$
 
 Donde los términos dependientes de $\alpha$ son un vector en la dirección de la recta, y los términos no dependientes de $\alpha$ son un punto de la recta.
 
-- Nota: Si en $R(D,p)$, $D= N_1 \times N_2=0$ ambos planos son paralelos.
+- Nota: Si en $R(D,p)$, Ejemplo de resolución del sistema en el caso $110$
+
+\begin{equation*}
+\begin{array}{ccc|c}
+1 & 0 & 0 & u/a - (b/a)((va - ue)/(ea - bd)) \\
+0 & 1 & 0 & (va - ue)/(ea - bd)
+\end{array}
+\end{equation*}
+
+Donde $N=(0\ 0\ 1)$ y $p$ puede verse en la resolución superior.
+$D= N_1 \times N_2=0$ ambos planos son paralelos.
 
 *** Casos especiales
 
@@ -407,8 +417,8 @@ A continuación se enumeran los casos especiales donde habrá que resolver el si
 \begin{array}{ccl}
 101 & 5 & XZ \\
 110 & 6 & XY \\
-011 & 7 & YZ \\
-111 & 8 & \text{fórmula general}
+011 & 3 & YZ \\
+111 & 7 & \text{fórmula general}
 \end{array}
 
 Ejemplo de resolución del sistema en el caso $101$
@@ -443,6 +453,8 @@ Ejemplo de resolución del sistema en el caso $011$
 \end{equation*}
 
 Donde $N=(1\ 0\ 0)$ y $p$ puede verse en la resolución superior.
+
+Debe usarse como ecuación principal (aquella con la coeficientes $abc$) la que tenga un valor $q_0q_1q_2$ mayor, menor si hemos codificado la máscara como $q_2q_1q_0$.
 
 Aunque $m$ sea uno de los valores de la tabla superior $P_1$ y $P_2$ pueden ser planos paralelos, A continuación se presenta un método para detectar si lo son.
 El método presupone el caso $m \in \{110, 111\}$.
