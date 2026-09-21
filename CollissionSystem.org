@@ -512,20 +512,15 @@ P_2 : Zv_x - Xv_z = p_zv_x - p_xv_z \\
 \end{array}
 \end{equation*}
 
-** Intersección entre un plano y una recta
 
-Como una recta es la intersección de dos planos realmente el problema es la intersección entre 3 planos.
+** Intersección Recta Recta
 
-También es extrapolable a la intersección entre 2 rectas si estas interseccionan.
-
-Partimos del sistema de intersección entre dos planos que se puede extraer desde la recta,
-y a este sistema se le añade la ecuación del plano.
 
 ** Intersección Triangulo Triangulo
 
 Sea $T_0=(t_{00}, t_{01}, t_{02})$ y $T_1=(t_{10}, t_{11}, t_{12})$ dos triangulos.
 
-Búscamos la recta $L$ de la intersección entre los planos $P_0$ y $P_1$.
+Búscamos la recta $L$ de la intersección entre los planos $P_0(N_0,h_0)$ y $P_1(N_1,h_1)$.
 
 $P_0 = aX + bY + cZ = u$ y
 $P_1 = dX + rY + fZ = v$
@@ -553,7 +548,7 @@ L \equiv \left(
 
 Una vez definido $L(v,p)$ buscamos en cada triángulo el vértice aislado $t_a$.
 
-$<t_{i} - p, v> = q_i$ para cada vértice $t_{i}$, $i \in \{0,1,2\}$
+$<t_{i} - p, v \times N> = q_i$ para cada vértice $t_{i}$, $i \in \{0,1,2\}$
 
 \begin{equation*}
 S(q_i) = \left\{
