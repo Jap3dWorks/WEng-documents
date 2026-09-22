@@ -27,11 +27,9 @@ Las formas no contienen los datos de transformación espacial.
 
 * Algoritmos
 ** Detección                                                         :ATTACH:
+*** Propuesta 1                                                      :ATTACH:
 :PROPERTIES:
 :ID:       bb6ea317-9507-4317-8d02-a8a96ed48e18
-:END:
-*** Propuesta 1
-:PROPERTIES:
 :STATUS:   proposal
 :END:
 
@@ -512,9 +510,7 @@ P_2 : Zv_x - Xv_z = p_zv_x - p_xv_z \\
 \end{array}
 \end{equation*}
 
-
 ** Intersección Recta Recta
-
 
 ** Intersección Triangulo Triangulo
 
@@ -660,6 +656,8 @@ namespace wcm {
 ** Collission System
 
 Encargado de ejecutar en cada frame (o el intérvalo elegido) la lógica de los colliders.
+
+** 
 
 * Módulos
 ** WCollission
