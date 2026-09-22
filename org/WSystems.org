@@ -1,8 +1,117 @@
 #+title: WSystems
 
+#+PROPERTY: STATUS_ALL proposal experimental implemented rejected
+
 * Design
 
+** WSystem type
+
+#+begin_src C++
+using WSystemFn = TFnPtr<bool(const WSystemParameters &)>;
+#+end_src
+
+Systems can simply be a function pointer.
+
+Registation process pairs each WSystemFn with an unique string.
+
+#+begin_src C++
+class WSystemRegister {
+public:
+
+    wcr::wid::WSystemId RegSystem(std::string_view name, WSystemFn system);
+
+    // ...
+
+};
+#+end_src
+
+All WSystems should be registered at startup aplication time.
+
+** WSystem data access
+
+Parameters
+
+** WSystem Register Struct
+:PROPERTIES:
+:STATUS:   rejected
+:END:
+
+#+begin_src C++
+struct WSystemReg {
+    
+    WSystemFn Init=nullptr;
+    WSystemFn Pre=nullptr;
+    WSystemFn Post=nullptr;
+    WSystemFn Render=nullptr;      // Render Calls
+    WSystemFn PostRender=nullptr;
+    WSystemFn End=nullptr;
+    
+};
+#+end_src
+
+- Pros:
+      - 1 object (1 registry or Id) represents multiple related calls
+            - E.g Init puts jobs into a worker pool
+            - PostRender waits to finish.
+- Cons:
+      - Unused space (8 bytes for each not used attribute).
 
 
+#+begin_src C++ :main no
 
-* 
+/** Stores Relations of WSystem and names*/
+class WSystemRegister;
+
+/**
+ * this can act as an function collection
+ * Pros One register stores multiple calls
+ * 
+*/
+
+int main() {
+    
+}
+
+#+end_src
+
+
+** WSystemRegister
+
+The Top level Engine class owns an instance of this class.
+
+All WSystems are registered into this class using a name.
+
+When levels are seralized will store which WSystems names have been used in each WSystem Point.
+
+** WSystemPoint
+
+System points establishes when WSystems are executed.
+Execution order inside each System Point is unknown.
+
+- Init : Systems executed at level start
+- Pre  : First Systems executed each loop.
+- Post : Second Systems executed each loop.
+- Render : Systems related with render tasks, executed each loop.
+- PostRender : Systems executed after render tasks, executed each loop.
+      - Could be used for waitting workers tasks in multithreaded systems.
+- WSystemFn End : Systems executed when a level will be unloaded.
+
+** Macro Registers
+
+namespace issues
+
+- Requirements
+      - [ ] Declare a WSystem
+      - [ ] Define a WSystem
+            - define in a library or inline?
+            - WSystems calls are not explicit, are called like pointers.
+                  - So inline will not be applied.
+            - WSystems will use tons of libraries, if there are defined in cpp files library spread can be controlled.
+            - WSystem call overhead will be applied only once by each engine cicle.
+      - [ ] Register Facilities
+            - Each WSystem has associated a helper funcitons for registry.
+
+#+begin_src C++
+// MODULE -> MODULE_API required for linkage tokens.
+#define DECLARE_WSYSTEM(MODULE, SYSTEM_NAME);
+#+end_src
