@@ -115,7 +115,9 @@ The engine class will reference to other modules in the aplication.
 **** Files
 - WEngRender/WEngRender.hpp
 **** Namespaces
-- wng::render
+
+- weng::defaults
+- weng::render
 
 ** WImporter
 *** Purpose
@@ -217,14 +219,14 @@ IRender implementation using Vulkan.
 
 /Collision detection/
 
-*** WComponents
+*** Components
 **** Purpose
 Required components to use the collision system.
 
 **** Namespace
 - wcl::component : 
 
-*** WSystems
+*** Systems
 **** Purpose
 Required WSystems to execute the collision system.
 
@@ -240,6 +242,16 @@ This module will contain the system for command registation, base classes and co
 each module will be responsible of its commands creation and registation in the system.
 
 ** WWindow
+** WSystem
+
+WSystem registers and macros.
+Core functionality to write WSystems.
+
+*** Namespaces
+
+- wsm : general module namespace
+- wsm::system
+
 * Template/Reflection
 *** WPROPERTY macro
 :PROPERTIES:

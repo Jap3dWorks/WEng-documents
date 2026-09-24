@@ -1,5 +1,7 @@
 #+title: WSystems
 
+#+startup: content
+
 #+PROPERTY: STATUS_ALL proposal experimental implemented rejected
 
 * Design
@@ -31,7 +33,8 @@ All WSystems should be registered at startup aplication time.
 
 Parameters
 
-** WSystem Register Struct
+** WSystems Register algorithms
+*** WSystem Register Struct
 :PROPERTIES:
 :STATUS:   rejected
 :END:
@@ -41,9 +44,9 @@ struct WSystemReg {
     
     WSystemFn Init=nullptr;
     WSystemFn Pre=nullptr;
+    WSystemFn Mid=nullptr;
+    WSystemFn Render=nullptr;      // Render related Calls
     WSystemFn Post=nullptr;
-    WSystemFn Render=nullptr;      // Render Calls
-    WSystemFn PostRender=nullptr;
     WSystemFn End=nullptr;
     
 };
@@ -74,29 +77,7 @@ int main() {
 
 #+end_src
 
-
-** WSystemRegister
-
-The Top level Engine class owns an instance of this class.
-
-All WSystems are registered into this class using a name.
-
-When levels are seralized will store which WSystems names have been used in each WSystem Point.
-
-** WSystemPoint
-
-System points establishes when WSystems are executed.
-Execution order inside each System Point is unknown.
-
-- Init : Systems executed at level start
-- Pre  : First Systems executed each loop.
-- Post : Second Systems executed each loop.
-- Render : Systems related with render tasks, executed each loop.
-- PostRender : Systems executed after render tasks, executed each loop.
-      - Could be used for waitting workers tasks in multithreaded systems.
-- WSystemFn End : Systems executed when a level will be unloaded.
-
-** Macro Registers
+*** Macro Registers
 
 namespace issues
 
@@ -115,3 +96,93 @@ namespace issues
 // MODULE -> MODULE_API required for linkage tokens.
 #define DECLARE_WSYSTEM(MODULE, SYSTEM_NAME);
 #+end_src
+
+**** Using X Macros for boilerplate code
+
+X macros are like.
+
+#+begin_src C++
+
+// .hpp file
+// ---------
+
+#define WSYSTEM_MODULE WMODULE
+
+#define WSYSTEM_COLLECTION COLLNAME
+
+#define WSYSTEM_XITEMS \
+    X(Init_InitializeTransformsMatrix) \
+    X(Init_RenderLevelResources)       \
+
+#include "WSystem/template/boilerplate.inc"
+
+// boilerplate.inc
+// ---------------
+
+namespace wsm {
+
+struct WMODULE ## _ ## COLLNAME {
+
+#define X(Name) \
+    WENGINE_API static bool Name(WSystemParameters const &); \
+
+// Define WSystems functions
+WSYSTEM_XITEMS
+#undef X
+
+// Create a list with item names
+#define X(Name) #Name ,
+
+    static inline std::array system_names = {WSYSTEM_XITEMS "0"};
+
+#undef X
+
+};
+
+#define X(Name) reg.regsystem(wsm::Name, #Name); \
+    
+inline void MODULE_RegSystems(auto & reg) {
+    WSYSTEM_XITEMS ;
+}
+
+}
+
+#undef X
+#undef WSYSTEM_XITEMS
+
+#+end_src
+
+- Pros
+      - Allows actions over all items.
+      - Avoids to rewrite a function register
+      - Can be used in a future reflection system
+      - WSystem boilerplate code can be write as a template .inc file
+      - Less macros usage than actual solution.
+      - Systems Definitions can be as usual normal code.
+- Cons
+      - It is required to define and undefine macros to populate with new items the XMACRO.
+      - Contains ugly #includes files (the boilerplate .inc template).
+
+*** WSystemRegister
+
+Engine class owns an instance of this class.
+
+All WSystems are registered into this class using a name.
+
+When levels are seralized will store which WSystems names have been used in each WSystem Point.
+
+** WSystem Execution
+
+*** Execution Points
+
+System points establishes when WSystems are executed.
+Execution order inside each System Point is unknown.
+
+- *Init* : Systems executed at level start
+- *Pre*  : First Systems executed each loop.
+- *Mid*  :
+- *Render* : Systems related with render tasks, executed each loop.
+- *Post* : Second Systems executed each loop.
+      - Could be used for waitting workers tasks in multithreaded systems.
+- *End*  : Systems executed when a level will be unloaded.
+
