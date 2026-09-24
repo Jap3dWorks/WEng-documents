@@ -18,6 +18,9 @@ Las formas no contienen los datos de transformación espacial.
 - *Touch* : Dos formas bloqueantes se tocan.
 
 ** Eventos de Colisión
+:PROPERTIES:
+:CUSTOM_ID: eventos-collision
+:END:
 
 - *InitIntersect* : Dos formas empiezan este frame a interseccionar.
 - *WhileIntersect* : Dos formas están interseccionando en este frame.
@@ -620,8 +623,8 @@ La idea es encontrar los dos puntos de intersección en cada triángulo, proyect
 Si existe solapamiento escalar los dos triángulos interseccionan.
 
 * Subsistemas
-** Collission Component
-*** Propuesta 1
+** Components
+*** Collider
 
 Un solo tipo de componente, una propiedad contiene la shape de colisión (std::variant).
 
@@ -653,11 +656,39 @@ namespace wcm {
 }
 #+end_src
 
-** Collission System
+*** CollisionData
 
-Encargado de ejecutar en cada frame (o el intérvalo elegido) la lógica de los colliders.
+Datos necesarios para los cálculos de los colliders.
+Por ejemplo puede albergar el árbol de colliders.
 
-** 
+** Systems
+
+El objetivo de los sistmes es inyectar los procesos necesarios en los puntos de ejecución correctos.
+
+*** SetupLevel
+Un system para preparar la escena y comprobar que todo está ok para las colisiones.
+
+*** CollisionDetect
+Algoritmo de detección de colisiones.
+
+Pueden ejecutarse los eventos de collision inmediatamente.
+
+*** CleanLevel
+Acciones necesarias en el sistema de colisiones para descargar el nivel de forma segura.
+
+** CollisionTree
+
+Objeto pensado para almacenar las estructuras de acceleración de los colliders.
+
+** CollisionResolver
+
+Objeto pensado para comprobar que collisiones están siendo efectivas.
+
+** CollisionRuntimeData
+
+Objeto pensado para almacenar que collisiones están actualmente activas.
+Qué pares de colliders están interactuando.
+Que tipo de evento debe ser emitido [[#eventos-collision]].
 
 * Módulos
 ** WCollission
