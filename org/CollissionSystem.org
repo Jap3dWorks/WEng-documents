@@ -622,6 +622,32 @@ La idea es encontrar los dos puntos de intersección en cada triángulo, proyect
 
 Si existe solapamiento escalar los dos triángulos interseccionan.
 
+** Transformar un plano
+
+Sea $P(N,d)$ un plano con dirección $N$ y un punto del plano $p = Nd$ 
+Sea $T$ una matriz de transformación.
+
+Sea el plano $P'(N',d')$ el plano $P$ transformado por la matriz $T$.
+
+$T_{3x3}N=N'$
+
+Sea $t=(T_{4j})$ para $j = 1,2,3$
+Sea $q=N'd$ y $q+t$ un punto del plano $P'$
+
+Si $p'=N'd'$ Entonces
+
+$\displaystyle \frac{<N',q+t>}{||N'||} = D$
+
+$\displaystyle \frac{N'}{||N'||}\cdot D = p'$
+
+Por tanto.
+
+$\displaystyle N' \cdot \frac{<N', q + t>}{<N'>} = p'$
+
+y por tanto
+
+$\displaystyle d'= \frac{<N', q + t>}{<N'>}$
+
 * Subsistemas
 ** Components
 *** Collider
