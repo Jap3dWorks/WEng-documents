@@ -1,7 +1,7 @@
 #+title: Collission System
 #+author: Jordi Amposta
 
-#+startup: latexpreview content
+#+startup: latexpreview overview
 #+PROPERTY: STATUS_ALL proposal experimental implemented rejected
 
 * Formas
@@ -455,7 +455,7 @@ Ejemplo de resolución del sistema en el caso $011$
 
 Donde $N=(1\ 0\ 0)$ y $p$ puede verse en la resolución superior.
 
-Debe usarse como ecuación principal (aquella con la coeficientes $abc$) la que tenga un valor $q_0q_1q_2$ mayor, menor si hemos codificado la máscara como $q_2q_1q_0$.
+Debe usarse como ecuación principal (aquella con coeficientes $abc$) la que tenga un valor $q_0q_1q_2$ mayor, menor si hemos codificado la máscara como $q_2q_1q_0$.
 
 Aunque $m$ sea uno de los valores de la tabla superior $P_1$ y $P_2$ pueden ser planos paralelos, A continuación se presenta un método para detectar si lo son.
 El método presupone el caso $m \in \{110, 111\}$.
@@ -468,10 +468,10 @@ e = \alpha b \\
 f = \alpha c
 \end{array}
 
-Si sustituimos estos valores en la expresión $ac - db$ entonces:
+Si sustituimos estos valores en la expresión $ae - db$ entonces:
 
 \begin{equation*}
-ac-db = \alpha(ab-ba) = 0
+ae-db = \alpha(ab-ba) = 0
 \end{equation*}
 
 Y si además de la condición superior se cumple que $N_1 d_1 = N_2 d_2$ entonces $P_1=P_2$ .
@@ -650,6 +650,7 @@ $\displaystyle d'= \frac{<N', q + t>}{<N'>}$
 
 * Subsistemas
 ** Components
+
 *** Collider
 
 Un solo tipo de componente, una propiedad contiene la shape de colisión (std::variant).
@@ -664,6 +665,8 @@ Al ser un único tipo de componente para todas las formas permite que:
 - El componente no conoce a su entidad ni a su transformación.
       - Ahorra espacio en memoria
 
+Cada collider puede contener un aabb para accelerar los cálculos de colision.
+
 #+begin_src C++
 using CollTypeVariant = std::variant<Box,Circle,Capsule>;
 
@@ -672,11 +675,15 @@ namespace wcm {
 
         CollTypeVariant collission_shape{};
 
+        AABB aabb{};
+
         // Events
 
         TEvent<void,wcl::CollData> OnInitIntersect;
         TEvent<void,wcl::CollData> OnIntersecting;
-        TEvent<void,wcl::CollData> OnLeaveIntersect;
+        TEvent<void,wcl::CollData> OnEndIntersect;
+
+        
 
     };
 }
@@ -685,21 +692,34 @@ namespace wcm {
 *** CollisionData
 
 Datos necesarios para los cálculos de los colliders.
-Por ejemplo puede albergar el árbol de colliders.
+Por ejemplo:
+- Puede albergar el árbol de colliders.
+- Puede albergar las colisiones activas del frame anterior.
+      - Permite definir begin, while o end
+
 
 ** Systems
 
-El objetivo de los sistmes es inyectar los procesos necesarios en los puntos de ejecución correctos.
-
 *** SetupLevel
-Un system para preparar la escena y comprobar que todo está ok para las colisiones.
+
+- Un system para preparar la escena y comprobar que todo está ok para las colisiones.
+      - *inicializar* los aabb de todos los colliders.
+
+- Crea las estructuras necesarias.
+
+*** Init/Update AABB
+
+- System para *actualizar* los aabb de todos los colliders.
+      - Según el tipo de transformación y el typo de shape se pueden hacer diferentes actualizaciones.
 
 *** CollisionDetect
+
 Algoritmo de detección de colisiones.
 
 Pueden ejecutarse los eventos de collision inmediatamente.
 
 *** CleanLevel
+
 Acciones necesarias en el sistema de colisiones para descargar el nivel de forma segura.
 
 ** CollisionTree
@@ -714,12 +734,8 @@ Objeto pensado para comprobar que collisiones están siendo efectivas.
 
 Objeto pensado para almacenar que collisiones están actualmente activas.
 Qué pares de colliders están interactuando.
-Que tipo de evento debe ser emitido [[#eventos-collision]].
 
-* Módulos
+Que tipo de Evento debe ser emitido [[#eventos-collision]].
+
+* Implementación
 ** WCollission
-** WObjects
-
-Contiene el subsistema de *Collission Component*.
-
-** WSystems
