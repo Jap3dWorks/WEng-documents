@@ -677,13 +677,13 @@ namespace wcm {
 
         AABB aabb{};
 
+        std::byte mask{255};
+
         // Events
 
         TEvent<void,wcl::CollData> OnInitIntersect;
         TEvent<void,wcl::CollData> OnIntersecting;
         TEvent<void,wcl::CollData> OnEndIntersect;
-
-        
 
     };
 }
@@ -696,7 +696,6 @@ Por ejemplo:
 - Puede albergar el árbol de colliders.
 - Puede albergar las colisiones activas del frame anterior.
       - Permite definir begin, while o end
-
 
 ** Systems
 
